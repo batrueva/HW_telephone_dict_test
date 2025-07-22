@@ -1,4 +1,5 @@
 import json
+import os
 from typing import TypeVar, List, Tuple
 
 
@@ -26,7 +27,7 @@ class Contact:
         return self.first_name == other.first_name or self.phone == other.phone
 
     def __str__(self):
-        return f'Фамилия: {self.first_name} | Имя:{self.name} | Телефон:{self.phone}  | Kомментарий:{self.comment}'
+        return f'Фамилия: {self.first_name} | Имя: {self.name} | Телефон: {self.phone}  | Kомментарий: {self.comment}'
 
     def __repr__(self):
         return f'Contact(first_name = ({self.first_name}), name =({self.name}), phone = ({self.phone}), comment = ({self.comment}))'
@@ -127,6 +128,7 @@ class PhoneBook:
         Метод класса Изменить контакт
 
         Params:
+            contact_id (str): ИД контакта            
             list_input_user (List[str]): Список значений полей контакта
 
         Returns:
@@ -151,14 +153,14 @@ class PhoneBook:
             contact_id (List[str]): ИД контакта
 
         Returns:
-            tuple[bool, str]: True, Имя удаленного контакта/ False, описание ошибки
+            tuple[bool, str]: True, Фамилия удаленного контакта/ False, описание ошибки
 
         """
         try:
             del_contact = self.dict_data.pop(contact_id[0])
             return True, dict(del_contact)[self.DICT_KEYS[0]]
         except Exception as e:
-            return False, e
+            return False, str(e)
 
     def func_reading_from_file(self) -> Tuple[bool, str]:
         """
@@ -179,6 +181,10 @@ class PhoneBook:
             for idx, contact in result.items():
                 self.func_create_contact(contact.values(), idx)
             return True, ""
+        except FileNotFoundError as e:
+            return False, str(e)
+        except PermissionError as e:
+            return False, str(e)
         except Exception as e:
             return False, str(e)
 
@@ -200,5 +206,9 @@ class PhoneBook:
                 json.dump(result, file,
                           indent=4, ensure_ascii=False)
             return True, ""
+        except FileNotFoundError as e:
+            return False, str(e)
+        except PermissionError as e:
+            return False, str(e)
         except Exception as e:
             return False, str(e)
