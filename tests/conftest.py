@@ -1,4 +1,5 @@
 import pytest
+import os
 from model import Contact, PhoneBook
 
 
@@ -29,6 +30,11 @@ def test_contact3():
 @pytest.fixture
 def test_pb():
     return PhoneBook('test.json')
+
+
+@pytest.fixture
+def test_pb_FileNotFoundError():
+    return PhoneBook('test_FileNotFound.json')
 # @pytest.fixture
 # def sample_Contact(list_contact):  # scope='module'/'function'/'session'/'class'
 #     return Contact.from_list(list_contact)
@@ -43,3 +49,18 @@ def test_messages():
         'Введите комментарий:',
 
     ]
+
+
+@pytest.fixture(scope="function")
+def delete_file():
+    file_path = "test_notfound.json"  # Replace with the actual path to your file
+
+    try:
+        os.remove(file_path)
+
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found.")
+    except PermissionError:
+        print(f"Error: Permission denied to delete '{file_path}'.")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")

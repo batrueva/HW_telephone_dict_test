@@ -15,3 +15,7 @@ class InvalidChoiceMenu(InvalidInputUser):
 
 class InvalidContactData(InvalidInputUser):
     pass
+
+
+class FileOpenError(InvalidInputUser):
+    pass

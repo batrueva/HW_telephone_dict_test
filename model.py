@@ -1,13 +1,13 @@
 import json
-import os
 from typing import TypeVar, List, Tuple
+from customException import InvalidContactData, InvalidInputUser, FileOpenError
 
 
 class Contact:
     """Класс Контакт"""
 
     def __init__(self, first_name: str, name: str, phone: str, comment: str):
-        """ 
+        """
         Инициализация класса Контакт.
 
         Params:
@@ -77,9 +77,6 @@ class PhoneBook:
     def __getitem__(self, index):
         return self.dict_data(index)
 
-    def __str__(self):
-        pass
-
     def __iter__(self):
         for attr, value in self.__dict__items():
             yield (attr, dict(value))
@@ -128,7 +125,7 @@ class PhoneBook:
         Метод класса Изменить контакт
 
         Params:
-            contact_id (str): ИД контакта            
+            contact_id (str): ИД контакта
             list_input_user (List[str]): Список значений полей контакта
 
         Returns:
@@ -181,12 +178,16 @@ class PhoneBook:
             for idx, contact in result.items():
                 self.func_create_contact(contact.values(), idx)
             return True, ""
-        except FileNotFoundError as e:
-            return False, str(e)
+        except FileExistsError as e:
+
+            raise FileOpenError(e)
+
         except PermissionError as e:
-            return False, str(e)
+
+            raise FileOpenError(e)
         except Exception as e:
-            return False, str(e)
+
+            raise FileOpenError(e)
 
     def func_write_to_file(self) -> Tuple[bool, str]:
         """
@@ -206,9 +207,11 @@ class PhoneBook:
                 json.dump(result, file,
                           indent=4, ensure_ascii=False)
             return True, ""
-        except FileNotFoundError as e:
-            return False, str(e)
+        except FileExistsError as e:
+            raise FileOpenError(e)
+
         except PermissionError as e:
-            return False, str(e)
+            raise FileOpenError(e)
+
         except Exception as e:
-            return False, str(e)
+            raise FileOpenError(e)
